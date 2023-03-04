@@ -1,9 +1,10 @@
 import './App.css';
+import KakaoMap from './components/KakaoMap';
 
 const App = () => {
   return (
     <div>
-      <p>409_USW_Campus WebView</p>
+      <KakaoMap />
     </div>
   );
 };
