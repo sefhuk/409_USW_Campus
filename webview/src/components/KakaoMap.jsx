@@ -7,6 +7,8 @@ const KakaoMap = () => {
     <Map
       className={styles.container}
       center={{ lat: 37.20879323125512, lng: 126.97666944064247 }}
+      style={{ width: '100vw', height: '100vh' }}
+      level={4}
     >
       {building.map(e => (
         <MapMarker
