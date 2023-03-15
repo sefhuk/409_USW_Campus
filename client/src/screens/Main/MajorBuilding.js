@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Alert, Linking, AppState } from 'react-native';
+import { StyleSheet, View, Alert } from 'react-native';
 import WebView from 'react-native-webview';
 import * as Location from 'expo-location';
+import { WEBVIEW_HOST } from '@env';
 
 const MajorBuilding = () => {
   const [isPermit, setIsPermit] = useState(false);
@@ -48,7 +49,7 @@ const MajorBuilding = () => {
   return (
     <View style={styles.container}>
       <WebView
-        source={{ url: 'https://hyuk.ml' }}
+        source={{ url: `${WEBVIEW_HOST}` }}
         style={styles.webview}
         ref={WebViewRef}
       />
