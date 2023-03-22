@@ -5,10 +5,13 @@ import {
   Alert,
   Linking,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { MaterialIcons } from '@expo/vector-icons';
+import { building } from '../../assets/buildings';
+import { imagePath } from '../../assets/imagePath';
 
 const MajorBuilding = () => {
   const [pos, setPos] = useState({});
@@ -91,6 +94,21 @@ const MajorBuilding = () => {
         >
           <MaterialIcons name='location-history' size={30} color='red' />
         </Marker>
+        {building.map(element => (
+          <Marker
+            key={element.engName}
+            title={element.engName}
+            coordinate={{
+              latitude: element.latitude,
+              longitude: element.longitude,
+            }}
+          >
+            <Image
+              source={imagePath[element.engName]}
+              style={{ width: 35, height: 35 }}
+            />
+          </Marker>
+        ))}
       </MapView>
       <TouchableOpacity
         style={styles.myLocation}
