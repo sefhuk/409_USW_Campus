@@ -10,8 +10,8 @@ import {
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { MaterialIcons } from '@expo/vector-icons';
-import { building } from '../../assets/buildings';
-import { imagePath } from '../../assets/imagePath';
+import { buildingList } from '../../assets/buildingList';
+import { markerImage } from '../../assets/imagePath';
 
 const MajorBuilding = () => {
   const [pos, setPos] = useState({});
@@ -94,7 +94,7 @@ const MajorBuilding = () => {
         >
           <MaterialIcons name='location-history' size={30} color='red' />
         </Marker>
-        {building.map(element => (
+        {buildingList.map(element => (
           <Marker
             key={element.engName}
             title={element.engName}
@@ -104,7 +104,7 @@ const MajorBuilding = () => {
             }}
           >
             <Image
-              source={imagePath[element.engName]}
+              source={markerImage[element.engName]}
               style={{ width: 35, height: 35 }}
             />
           </Marker>

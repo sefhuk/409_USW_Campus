@@ -1,4 +1,4 @@
-export const building = [
+export const buildingList = [
   {
     engName: 'libralArts',
     korName: '인문대학',

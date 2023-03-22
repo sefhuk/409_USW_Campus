@@ -24,7 +24,7 @@ const MainScreen = () => {
         tabBarIcon: () => {
           return (
             <View>
-              <Image source={require('../../assets/tab/tab_building.png')} />
+              <Image source={require('../../assets/tab/majorBuilding.png')} />
             </View>
           );
         },
