@@ -43,7 +43,6 @@ const MajorBuilding = () => {
   };
 
   const trackingPosition = async () => {
-    console.log('traking start!');
     await Location.watchPositionAsync(
       {
         accuracy: Location.Accuracy.BestForNavigation,
