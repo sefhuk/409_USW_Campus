@@ -1,43 +1,59 @@
-import { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Alert } from 'react-native';
-import WebView from 'react-native-webview';
+import { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  View,
+  Alert,
+  Linking,
+  TouchableOpacity,
+} from 'react-native';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { WEBVIEW_HOST } from '@env';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const MajorBuilding = () => {
+  const [pos, setPos] = useState({});
   const [isPermit, setIsPermit] = useState(false);
-  const WebViewRef = useRef();
+  const [centerPos, setCenterPos] = useState({
+    latitude: 37.208468830819136,
+    longitude: 126.97655688740143,
+  });
 
   const askPermission = async () => {
-    const { granted } = await Location.getForegroundPermissionsAsync();
-    if (!granted) {
-      Alert.alert('본 앱은 위치제공 동의가 필요합니다', '', [
+    const { canAskAgain } = await Location.getForegroundPermissionsAsync();
+    if (canAskAgain) {
+      const { granted } = await Location.requestForegroundPermissionsAsync();
+      if (granted) {
+        setIsPermit(true);
+        return;
+      }
+    }
+    Alert.alert(
+      '본 앱은 위치제공 동의가 필요합니다',
+      '설정 화면으로 이동합니다',
+      [
         {
           text: '확인',
-          onPress: async () => {
-            await Location.requestForegroundPermissionsAsync();
+          style: 'cancel',
+          onPress: () => {
+            Linking.openSettings();
           },
         },
-      ]);
-    }
-    // 위치제공 동의 가정
-    setIsPermit(true);
-    trackingPosition();
+      ]
+    );
   };
 
   const trackingPosition = async () => {
+    console.log('traking start!');
     await Location.watchPositionAsync(
       {
-        accuracy: Location.Accuracy.Balanced,
-        distanceInterval: 0.2,
+        accuracy: Location.Accuracy.BestForNavigation,
+        distanceInterval: 0.5,
       },
       position => {
-        WebViewRef.current.postMessage(
-          JSON.stringify({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          })
-        );
+        setPos({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
       }
     );
   };
@@ -46,13 +62,51 @@ const MajorBuilding = () => {
     askPermission();
   }, []);
 
+  useEffect(() => {
+    if (isPermit) {
+      trackingPosition();
+    }
+  }, [isPermit]);
+
   return (
     <View style={styles.container}>
-      <WebView
-        source={{ url: `${WEBVIEW_HOST}` }}
-        style={styles.webview}
-        ref={WebViewRef}
-      />
+      <MapView
+        style={styles.mapView}
+        provider={PROVIDER_GOOGLE}
+        initialRegion={{
+          latitude: 37.208468830819136,
+          longitude: 126.97655688740143,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}
+        minZoomLevel={16}
+        maxZoomLevel={18}
+        region={centerPos}
+      >
+        <Marker
+          title='User'
+          coordinate={{
+            latitude: pos.latitude,
+            longitude: pos.longitude,
+          }}
+        >
+          <MaterialIcons name='location-history' size={30} color='red' />
+        </Marker>
+      </MapView>
+      <TouchableOpacity
+        style={styles.myLocation}
+        onPress={() => {
+          askPermission();
+          setCenterPos({
+            latitude: pos.latitude,
+            longitude: pos.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+        }}
+      >
+        <MaterialIcons name='my-location' size={30} color='#42C2FF' />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -61,8 +115,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  webview: {
+  mapView: {
     flex: 1,
+  },
+  myLocation: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    width: 35,
+    height: 35,
+    backgroundColor: '#ffffff',
+    borderRadius: '10%',
   },
 });
 
