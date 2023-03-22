@@ -7,7 +7,7 @@ const Tab = createBottomTabNavigator();
 const MainScreen = () => {
   return (
     <Tab.Navigator
-      initialRouteName='major'
+      initialRouteName='Major'
       screenOptions={{
         headerBackground: () => {
           return (
@@ -30,7 +30,7 @@ const MainScreen = () => {
         },
       }}
     >
-      <Tab.Screen name='major' component={MajorBuilding} />
+      <Tab.Screen name='Major' component={MajorBuilding} />
     </Tab.Navigator>
   );
 };
