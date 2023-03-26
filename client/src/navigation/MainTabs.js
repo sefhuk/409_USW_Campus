@@ -1,10 +1,10 @@
 import { StyleSheet, Image, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import MajorBuilding from './MajorBuilding';
+import MajorScreen from '../screens/Main/MajorScreen';
 
 const Tab = createBottomTabNavigator();
 
-const MainScreen = () => {
+const MainTabs = () => {
   return (
     <Tab.Navigator
       initialRouteName='Major'
@@ -12,7 +12,7 @@ const MainScreen = () => {
         headerBackground: () => {
           return (
             <View style={styles.headerContainer}>
-              <Image source={require('../../assets/header.png')} />
+              <Image source={require('../assets/image/header.png')} />
             </View>
           );
         },
@@ -24,13 +24,15 @@ const MainScreen = () => {
         tabBarIcon: () => {
           return (
             <View>
-              <Image source={require('../../assets/tab/majorBuilding.png')} />
+              <Image
+                source={require('../assets/image/tab/majorBuilding.png')}
+              />
             </View>
           );
         },
       }}
     >
-      <Tab.Screen name='Major' component={MajorBuilding} />
+      <Tab.Screen name='Major' component={MajorScreen} />
     </Tab.Navigator>
   );
 };
@@ -43,4 +45,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MainScreen;
+export default MainTabs;

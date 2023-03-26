@@ -17,7 +17,10 @@ const SplashScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Image source={require('../assets/main.png')} style={styles.image} />
+      <Image
+        source={require('../assets/image/main.png')}
+        style={styles.image}
+      />
     </SafeAreaView>
   );
 };

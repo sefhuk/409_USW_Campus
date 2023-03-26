@@ -13,7 +13,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { buildingList } from '../../assets/buildingList';
 import { markerImage } from '../../assets/imagePath';
 
-const MajorBuilding = () => {
+const MajorScreen = () => {
   const [pos, setPos] = useState({});
   const [isPermit, setIsPermit] = useState(false);
   const [centerPos, setCenterPos] = useState({
@@ -148,4 +148,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MajorBuilding;
+export default MajorScreen;
