@@ -1,64 +1,17 @@
 import { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  View,
-  Alert,
-  Linking,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
-import * as Location from 'expo-location';
 import { MaterialIcons } from '@expo/vector-icons';
 import { buildingList } from '../../assets/buildingList';
 import { markerImage } from '../../assets/imagePath';
+import { useLocationAPI } from '../../hooks/useLocationAPI';
 
 const MajorScreen = () => {
-  const [pos, setPos] = useState({});
-  const [isPermit, setIsPermit] = useState(false);
   const [centerPos, setCenterPos] = useState({
     latitude: 37.208468830819136,
     longitude: 126.97655688740143,
   });
-
-  const askPermission = async () => {
-    const { canAskAgain } = await Location.getForegroundPermissionsAsync();
-    if (canAskAgain) {
-      const { granted } = await Location.requestForegroundPermissionsAsync();
-      if (granted) {
-        setIsPermit(true);
-        return;
-      }
-    }
-    Alert.alert(
-      '본 앱은 위치제공 동의가 필요합니다',
-      '설정 화면으로 이동합니다',
-      [
-        {
-          text: '확인',
-          style: 'cancel',
-          onPress: () => {
-            Linking.openSettings();
-          },
-        },
-      ]
-    );
-  };
-
-  const trackingPosition = async () => {
-    await Location.watchPositionAsync(
-      {
-        accuracy: Location.Accuracy.BestForNavigation,
-        distanceInterval: 0.5,
-      },
-      position => {
-        setPos({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
-      }
-    );
-  };
+  const [askPermission, trackingPosition, pos, isPermit] = useLocationAPI();
 
   useEffect(() => {
     askPermission();
@@ -120,6 +73,7 @@ const MajorScreen = () => {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           });
+          console.log(pos);
         }}
       >
         <MaterialIcons name='my-location' size={30} color='#42C2FF' />
