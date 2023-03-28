@@ -10,6 +10,8 @@ const MajorScreen = () => {
   const [centerPos, setCenterPos] = useState({
     latitude: 37.208468830819136,
     longitude: 126.97655688740143,
+    // latitude: 37.2084688,
+    // longitude: 126.97655,
   });
   const [askPermission, trackingPosition, pos, isPermit] = useLocationAPI();
 
@@ -41,8 +43,8 @@ const MajorScreen = () => {
         <Marker
           title='User'
           coordinate={{
-            latitude: pos.latitude,
-            longitude: pos.longitude,
+            latitude: pos.latitude ? pos.latitude : 0,
+            longitude: pos.longitude ? pos.longitude : 0,
           }}
         >
           <MaterialIcons name='location-history' size={30} color='red' />
@@ -52,8 +54,8 @@ const MajorScreen = () => {
             key={element.engName}
             title={element.engName}
             coordinate={{
-              latitude: element.latitude,
-              longitude: element.longitude,
+              latitude: element.latitude ? parseFloat(element.latitude) : 0,
+              longitude: element.longitude ? parseFloat(element.longitude) : 0,
             }}
           >
             <Image
@@ -73,7 +75,6 @@ const MajorScreen = () => {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           });
-          console.log(pos);
         }}
       >
         <MaterialIcons name='my-location' size={30} color='#42C2FF' />
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     width: 35,
     height: 35,
     backgroundColor: '#ffffff',
-    borderRadius: '10%',
+    borderRadius: 10,
   },
 });
 
