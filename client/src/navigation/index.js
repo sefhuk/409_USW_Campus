@@ -5,6 +5,7 @@ import MainTabs from './MainTabs';
 import SplashScreen from '../screens/SplashScreen';
 
 const Stack = createNativeStackNavigator();
+
 const Navigation = () => {
   return (
     <NavigationContainer>
