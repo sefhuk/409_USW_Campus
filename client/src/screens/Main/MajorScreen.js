@@ -1,4 +1,4 @@
-import { useState, useEffect, useInsertionEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import {
@@ -12,12 +12,11 @@ import { useLocationAPI } from '../../hooks/useLocationAPI';
 import DistanceList from '../../components/DistanceList';
 
 const MajorScreen = () => {
-  const [centerPos, setCenterPos] = useState({
-    latitude: 37.208468830819136,
-    longitude: 126.97655688740143,
-  });
   const { top, bottom } = useSafeAreaInsets();
   const { height } = useSafeAreaFrame();
+
+  const mapViewRef = useRef();
+
   const [askPermission, trackingPosition, pos, isPermit] = useLocationAPI();
 
   useEffect(() => {
@@ -34,6 +33,7 @@ const MajorScreen = () => {
     <View style={styles.container}>
       <MapView
         style={styles.mapView}
+        ref={mapViewRef}
         provider={PROVIDER_GOOGLE}
         initialRegion={{
           latitude: 37.208468830819136,
@@ -43,7 +43,7 @@ const MajorScreen = () => {
         }}
         minZoomLevel={16}
         maxZoomLevel={18}
-        region={centerPos}
+        region={{ latitude: 37.208468830819136, longitude: 126.97655688740143 }}
       >
         <Marker
           title='User'
@@ -74,12 +74,7 @@ const MajorScreen = () => {
         style={styles.myLocation}
         onPress={() => {
           askPermission();
-          setCenterPos({
-            latitude: pos.latitude + 0.00000001,
-            longitude: pos.longitude + 0.00000001,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          });
+          mapViewRef.current.animateToRegion(pos, 300);
         }}
       >
         <MaterialIcons name='my-location' size={30} color='#42C2FF' />
