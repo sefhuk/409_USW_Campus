@@ -1,18 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useInsertionEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import {
+  useSafeAreaFrame,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { buildingList } from '../../assets/buildingList';
 import { markerImage } from '../../assets/imagePath';
 import { useLocationAPI } from '../../hooks/useLocationAPI';
+import DistanceList from '../../components/DistanceList';
 
 const MajorScreen = () => {
   const [centerPos, setCenterPos] = useState({
     latitude: 37.208468830819136,
     longitude: 126.97655688740143,
-    // latitude: 37.2084688,
-    // longitude: 126.97655,
   });
+  const { top, bottom } = useSafeAreaInsets();
+  const { height } = useSafeAreaFrame();
   const [askPermission, trackingPosition, pos, isPermit] = useLocationAPI();
 
   useEffect(() => {
@@ -70,8 +75,8 @@ const MajorScreen = () => {
         onPress={() => {
           askPermission();
           setCenterPos({
-            latitude: pos.latitude,
-            longitude: pos.longitude,
+            latitude: pos.latitude + 0.00000001,
+            longitude: pos.longitude + 0.00000001,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           });
@@ -79,6 +84,7 @@ const MajorScreen = () => {
       >
         <MaterialIcons name='my-location' size={30} color='#42C2FF' />
       </TouchableOpacity>
+      <DistanceList safeHeight={height - bottom - top} pos={pos} />
     </View>
   );
 };
