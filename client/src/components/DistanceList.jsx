@@ -1,11 +1,48 @@
-import { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image, StyleSheet } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  StyleSheet,
+  PanResponder,
+} from 'react-native';
 import { buildingImage } from '../assets/imagePath';
 import { buildingList } from '../assets/buildingList';
 import { getPreciseDistance } from 'geolib';
 
 const DistanceList = ({ safeHeight, pos }) => {
   const [rank, setRank] = useState(buildingList);
+  const initialHeight = useRef(safeHeight * 0.25);
+  const [scrollViewHeight, setScrollViewHeight] = useState(safeHeight * 0.25);
+
+  // const fadeScollView = useRef(new Animated.Value(safeHeight * 0.25)).current;
+
+  const pan = useRef(
+    PanResponder.create({
+      // 화면을 터치한 것을 감지함
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+
+      onPanResponderGrant: () => {},
+
+      // 화면에 터치를 하고 움직일 때를 감지함
+      // 이동에 대한 props로 event와 gesture 값을 받을 수 있다.
+      // gesture내에 우리가 필요한 dx,dy 이동값이 들어있다.
+      onPanResponderMove: (_, gesture) => {
+        // const newH = scrollViewHeight - gesture.dy;
+        setScrollViewHeight(scrollViewHeight - gesture.dy);
+      },
+
+      onPanResponderStart: () => {
+        // console.log('start', scrollViewHeight);
+      },
+      //화면에 터치를 하고 손을 뗏을 때를 감지함
+      onPanResponderRelease: (_, gesture) => {
+        // setScrollViewHeight(newH);
+      },
+    })
+  ).current;
 
   const sortList = () => {
     let arr = [...rank];
@@ -28,8 +65,31 @@ const DistanceList = ({ safeHeight, pos }) => {
   }, [pos]);
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.scrollView} bounces={false}>
+    <View style={{ ...styles.container, height: scrollViewHeight }}>
+      <View
+        style={{
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          height: 10,
+          width: '100%',
+        }}
+        activeOpacity={1}
+        {...pan.panHandlers}
+      >
+        <View
+          style={{
+            backgroundColor: '#aaaaaa',
+            width: '20%',
+            height: '40%',
+            borderRadius: 50,
+          }}
+        />
+      </View>
+      <ScrollView
+        style={styles.scrollView}
+        bounces={false}
+        // scrollEnabled={false}
+      >
         {rank.map(building => (
           <View
             key={building.engName}
@@ -69,7 +129,6 @@ const DistanceList = ({ safeHeight, pos }) => {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    height: '30%',
     backgroundColor: '#ffffff',
   },
   scrollView: {

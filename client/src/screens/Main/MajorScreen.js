@@ -1,15 +1,18 @@
-import { useRef, useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
-import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import { useState, useRef, useEffect } from 'react';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import MapView, { PROVIDER_GOOGLE, Marker, Polygon } from 'react-native-maps';
 import {
   useSafeAreaFrame,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { buildingList } from '../../assets/buildingList';
-import { markerImage } from '../../assets/imagePath';
-import { useLocationAPI } from '../../hooks/useLocationAPI';
+
 import DistanceList from '../../components/DistanceList';
+import { buildingFeatures } from '../../assets/mapPolygonData';
+import { buildingList } from '../../assets/buildingList';
+
+import { useLocationAPI } from '../../hooks/useLocationAPI';
+import BuildingName from '../../components/BuildingName';
 
 const MajorScreen = () => {
   const { top, bottom } = useSafeAreaInsets();
@@ -18,6 +21,12 @@ const MajorScreen = () => {
   const mapViewRef = useRef();
 
   const [askPermission, trackingPosition, pos, isPermit] = useLocationAPI();
+
+  const [scrollViewHeight, setScrollViewHeight] = useState(
+    height - bottom - top
+  );
+
+  // const fadeScollView = useRef(new Animated.Value(safeHeight * 0.25)).current;
 
   useEffect(() => {
     askPermission();
@@ -44,7 +53,62 @@ const MajorScreen = () => {
         minZoomLevel={16}
         maxZoomLevel={18}
         region={{ latitude: 37.208468830819136, longitude: 126.97655688740143 }}
+        customMapStyle={[
+          {
+            elementType: 'labels',
+            stylers: [
+              {
+                visibility: 'off',
+              },
+            ],
+          },
+          {
+            featureType: 'poi.business',
+            elementType: 'labels.icon',
+            stylers: [{ visibility: 'off' }],
+          },
+          {
+            featureType: 'poi.park',
+            elementType: 'labels.icon',
+            stylers: [{ visibility: 'off' }],
+          },
+          {
+            featureType: 'poi.school',
+            elementType: 'labels.icon',
+            stylers: [{ visibility: 'off' }],
+          },
+          {
+            featureType: 'poi.government',
+            elementType: 'labels.icon',
+            stylers: [{ visibility: 'off' }],
+          },
+        ]}
       >
+        {buildingFeatures.map(e => {
+          return (
+            <Polygon
+              key={e.name}
+              coordinates={e.coord}
+              fillColor={e.color}
+              zIndex={0}
+              tappable={true}
+            />
+          );
+        })}
+        {buildingList.map(e => {
+          return (
+            <Marker
+              key={e.engName}
+              title={e.korName}
+              coordinate={{
+                latitude: Number(e.latitude),
+                longitude: Number(e.longitude),
+              }}
+            >
+              <BuildingName name={e.korName} />
+            </Marker>
+          );
+        })}
         <Marker
           title='User'
           coordinate={{
@@ -54,21 +118,6 @@ const MajorScreen = () => {
         >
           <MaterialIcons name='location-history' size={30} color='red' />
         </Marker>
-        {buildingList.map(element => (
-          <Marker
-            key={element.engName}
-            title={element.engName}
-            coordinate={{
-              latitude: element.latitude ? parseFloat(element.latitude) : 0,
-              longitude: element.longitude ? parseFloat(element.longitude) : 0,
-            }}
-          >
-            <Image
-              source={markerImage[element.engName]}
-              style={{ width: 35, height: 35 }}
-            />
-          </Marker>
-        ))}
       </MapView>
       <TouchableOpacity
         style={styles.myLocation}
